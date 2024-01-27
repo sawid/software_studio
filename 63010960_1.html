@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Page Title</title>
+    <style>
+        .top {
+            /* width: 100%; */
+            text-align: center;
+            background-color:gold;
+            color: blue;
+        }
+        .article {
+            text-align: center;
+            color: pink;
+        }
+        .reporter {
+            height: 300px;
+            color: cornflowerblue;
+        }
+        .reporter img {
+            position: fixed;
+            right: 0;
+            border-style: solid;
+            border-color:cornflowerblue;
+        }
+        .reporter time {
+            color:violet;
+        }
+        article {
+            display: grid;
+            grid-template-columns: auto auto;
+        }
+        aside {
+            position: fixed;
+            right: 0;
+            border: 1px;
+            border-style: solid none solid none ;
+            font-size: 40px;
+            /* margin-left: 100px; */
+        }
+        .luckd {
+            width: fit-content;
+        }
+        footer {
+            background-color:gold;
+            color: blue;
+            text-align: center;
+        }
+
+    </style>
+</head>
+
+<body>
+    <header class="top">
+        <h1>SW Studio Today</h1>
+    </header>
+    <header class="article">
+        <h2>The record of the CSS class</h2>
+    </header>
+    <div class="reporter">
+        <img src="https://previews.123rf.com/images/gmast3r/gmast3r1809/gmast3r180900199/109840480-brunette-businessman-avatar-man-face-profile-icon-concept-online-support-service-male-cartoon-charac.jpg"
+            alt="picture" width=300>Reported by <br>Mr. Sawit Limkiatsataporn<br> (Folk)<br> ID 63010960<br><br><time
+            datetime="2024-01-27">Jan 27, 2024</time>
+
+    </div>
+    <article>
+        <section class="col1">
+            <h3>Introduction</h3>
+            <p>describe your background about CSS e.g.
+            <ul>
+                <li>do you know CSS?</li>
+                <li>Have you ever been using CSS?</li>
+                <li>Have you ever worked with CSS before?</li>
+                <li>Have you any idea how CSS works?</li>
+                <li>What are you expecting from CSS?</li>
+                <li>etc.</li>
+            </ul>
+        </section>
+
+        <section class="col2">
+            <h3>The expectation</h3>
+            <p>Describe your expectations for today's class</p>
+            <p>You can list it like this:</p>
+            <ol>
+                <li>expect #1</li>
+                <li>expect #2</li>
+                <li>expect #3</li>
+            </ol>
+        </section>
+    </article>
+
+    <aside>
+        <p><em>your quote of today's class</em></p>
+    </aside>
+
+    <section class="prog">
+        <p>Progress of today's class <progress value="2" max="5"></progress></p>
+    </section>
+
+    <section class="luckd">
+        <p>register for lucky draw</p>
+        <form>
+            <fieldset>
+                <label>Name:</label><em>*</em> <input type="text" id="name" placeholder="John Smith" autofocus
+                    required><br>
+                <label>email:</label><em>*</em> <input type="email" id="email" placeholder="abc@def.com" autofocus
+                    required><br>
+                <label>Tel:</label><em>*</em> <input type="tel" id="tel" placeholder="0xx-xxxxxxx"
+                    pattern="[0-9]{3}-[0-9]{7}" autofocus required><br>
+                <input type="submit">
+            </fieldset>
+        </form>
+    </section>
+    <footer>
+        ce.kmitl all rights reserved & copyright 2020
+    </footer>
+</body>
+
+</html>
