@@ -1,0 +1,175 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="maincontainer">
+        <h2>Exercise 04: Javascript&Dom</h1>
+            <div class="clock-container">
+                <button id="showTimeButton">Click me to display Date and Time</button>
+                <div id="timeDisplay" style="display: none;"></div>
+            </div>
+            <p id="personalInfo" style="color: pink; text-decoration: underline; display: inline-block; position: relative;"
+                onmouseover="this.style.color='blue'; this.style.backgroundColor='yellow'; this.style.cursor='pointer'; "
+                onmouseout="this.style.color='pink'; this.style.backgroundColor=''; this.style.cursor='default';"
+                onclick="toggleNameContainer()">
+                Personal Info
+            </p>
+            <div class="name-container" style="display: none;">
+                <ul>
+                    <li>Sawit Limkiatsataporn, ID: 63010960</li>
+                    <li>Subject: Software Studio</li>
+                    <li>Semester: 2</li>
+                </ul>
+            </div>
+            <h1>Snapshots</h1>
+            <div class="snapshots-list">
+                <ul>
+                    <li>
+                        <span id="fireworkSpan" style="color: blue; text-decoration: underline; display: inline-block;"
+                            onclick="changeImage('firework')"
+                            onmouseover="this.style.cursor='pointer';"
+                            onmouseout="this.style.color='blue'; this.style.backgroundColor=''; this.style.cursor='default';">
+                            Firework
+                        </span>
+                    </li>
+                    <li>
+                        <span id="fireworkSpan" style="color: blue; text-decoration: underline; display: inline-block;"
+                            onclick="changeImage('crest')"
+                            onmouseover="this.style.cursor='pointer';"
+                            onmouseout="this.style.color='blue'; this.style.backgroundColor=''; this.style.cursor='default';">
+                            Crest
+                        </span>
+                    </li>
+                    <li>
+                        <span id="fireworkSpan" style="color: blue; text-decoration: underline; display: inline-block;"
+                            onclick="changeImage('action')"
+                            onmouseover="this.style.cursor='pointer';"
+                            onmouseout="this.style.color='blue'; this.style.backgroundColor=''; this.style.cursor='default';">
+                            Action
+                        </span>
+                    </li>
+                    <li>
+                        <span id="fireworkSpan" style="color: blue; text-decoration: underline; display: inline-block;"
+                            onclick="changeImage('buffalo')"
+                            onmouseover="this.style.cursor='pointer';"
+                            onmouseout="this.style.color='blue'; this.style.backgroundColor=''; this.style.cursor='default';">
+                            Buffalo
+                        </span>
+                    </li>
+                </ul>
+            </div>
+            <div style="margin-top: 10px;" class="image-container">
+                <img id="mainImage" src="https://e2.365dm.com/13/05/800x600/168311249_2941386.jpg?20130813223857" alt="">
+            </div>
+    </div>
+
+    <script>
+        // Create a new Worker and import the worker.js file
+        const worker = new Worker('worker.js');
+    
+        // Flag to indicate whether the time display is paused
+        let isPaused = false;
+    
+        // Function to update the time display and apply the color and contrast color
+        function updateTimeDisplay(time, color, contrastColor) {
+            const timeDisplay = document.getElementById('timeDisplay');
+            timeDisplay.textContent = time;
+            timeDisplay.style.color = color;
+            timeDisplay.style.backgroundColor = contrastColor;
+            timeDisplay.style.width = '500px';
+        }
+    
+        // Listen for messages from the worker
+        worker.onmessage = function(event) {
+            const { time, color, contrastColor } = event.data;
+            updateTimeDisplay(time, color, contrastColor);
+        };
+
+        function toggleNameContainer() {
+            const nameContainer = document.querySelector('.name-container');
+            nameContainer.style.display = nameContainer.style.display === 'none' ? 'block' : 'none';
+        }
+    
+        // Handle button click event
+        document.getElementById('showTimeButton').addEventListener('click', function() {
+            const timeDisplay = document.getElementById('timeDisplay');
+            const button = document.getElementById('showTimeButton');
+    
+            // Toggle between the two positions
+            if (timeDisplay.style.position === 'fixed') {
+                // Move to original position
+                timeDisplay.style.position = 'static';
+                // Send a message to the worker to pause the time
+                worker.postMessage('pause');
+            } else {
+                button.parentNode.removeChild(button);
+                // Move to top right position
+                timeDisplay.style.position = 'fixed';
+                timeDisplay.style.top = '10px';
+                timeDisplay.style.right = '10px';
+                // Send a message to the worker to resume the time
+                worker.postMessage('resume');
+            }
+    
+            // Show the time display
+            timeDisplay.style.display = 'block';
+        });
+    
+        // Function to change timeDisplay position when clicked
+        function changeTimeDisplayPosition() {
+            const timeDisplay = document.getElementById('timeDisplay');
+    
+            // Toggle between the two positions
+            if (timeDisplay.style.position === 'fixed') {
+                // Move to original position
+                timeDisplay.style.position = 'static';
+                // Send a message to the worker to pause the time
+                worker.postMessage('pause');
+            } else {
+                // Move to top right position
+                timeDisplay.style.position = 'fixed';
+                timeDisplay.style.top = '10px';
+                timeDisplay.style.right = '10px';
+                // Send a message to the worker to resume the time
+                worker.postMessage('resume');
+            }
+        }
+
+        function changeImage(imageName) {
+            // Define a mapping of image names to their corresponding URLs
+            const imageMapping = {
+                'firework': 'https://img.freepik.com/free-vector/realistic-fireworks-border-illustration_1284-57268.jpg',
+                'crest': 'https://a.espncdn.com/i/teamlogos/soccer/500-dark/360.png',
+                'action': 'https://akm-img-a-in.tosshub.com/indiatoday/images/story/202004/extraction_0.jpeg?size=690:388',
+                'buffalo': 'https://www.awf.org/sites/default/files/styles/species_image/public/2020-04/SpeciesPage_AfricanBuffalo02_Challenges.jpg?h=29c6c1f6&itok=VHn68yL8'
+                // Add more image URLs for other names
+            };
+
+            // Get the image element
+            const mainImage = document.getElementById('mainImage');
+
+            // Check if the imageName exists in the mapping
+            if (imageMapping.hasOwnProperty(imageName)) {
+                // Update the src attribute with the corresponding URL
+                mainImage.src = imageMapping[imageName];
+            }
+        }
+    
+        // Add onclick event to timeDisplay
+        document.getElementById('timeDisplay').onclick = changeTimeDisplayPosition;
+    
+        // Start updating time immediately
+        worker.postMessage('start');
+    </script>
+
+</body>
+
+</html>

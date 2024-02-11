@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+
+<head></head>
+
+<body>
+    <div id="maincontainer"></div>
+    <script>
+        let worker;
+        function setObjectOnLoad() {
+            var maincontainer = document.getElementById('maincontainer');
+
+            // Create h2 element
+            var h2Element = document.createElement('h2');
+            h2Element.textContent = 'Exercise 04: Javascript&Dom';
+            maincontainer.appendChild(h2Element);
+
+            // Create clock-container div
+            var clockContainer = document.createElement('div');
+            clockContainer.className = 'clock-container';
+            maincontainer.appendChild(clockContainer);
+
+            // Create button element
+            var showTimeButton = document.createElement('button');
+            showTimeButton.id = 'showTimeButton';
+            showTimeButton.textContent = 'Click me to display Date and Time';
+            showTimeButton.onclick = initWorker; // Attach worker initiation to button click
+            clockContainer.appendChild(showTimeButton);
+
+            // Create timeDisplay div
+            var timeDisplay = document.createElement('div');
+            timeDisplay.id = 'timeDisplay';
+            timeDisplay.style.display = 'none';
+            clockContainer.appendChild(timeDisplay);
+
+            // Create p element for Personal Info
+            var personalInfo = document.createElement('p');
+            personalInfo.id = 'personalInfo';
+            personalInfo.style = 'color: pink; text-decoration: underline; display: inline-block; position: relative;';
+            personalInfo.onmouseover = function () {
+                this.style.color = 'blue';
+                this.style.backgroundColor = 'yellow';
+                this.style.cursor = 'pointer';
+            };
+            personalInfo.onmouseout = function () {
+                this.style.color = 'pink';
+                this.style.backgroundColor = '';
+                this.style.cursor = 'default';
+            };
+            personalInfo.onclick = toggleNameContainer;
+            personalInfo.textContent = 'Personal Info';
+            maincontainer.appendChild(personalInfo);
+
+            // Create name-container div
+            var nameContainer = document.createElement('div');
+            nameContainer.className = 'name-container';
+            nameContainer.style.display = 'none';
+            maincontainer.appendChild(nameContainer);
+
+            // Create ul element for name-container
+            var ulElement = document.createElement('ul');
+            nameContainer.appendChild(ulElement);
+
+            // Create li elements for name-container
+            var liElements = ['Sawit Limkiatsataporn, ID: 63010960', 'Subject: Software Studio', 'Semester: 2'];
+            liElements.forEach(function (text) {
+                var liElement = document.createElement('li');
+                liElement.textContent = text;
+                ulElement.appendChild(liElement);
+            });
+
+            // Create h1 element for Snapshots
+            var h1Element = document.createElement('h1');
+            h1Element.textContent = 'Snapshots';
+            maincontainer.appendChild(h1Element);
+
+            // Create snapshots-list div
+            var snapshotsList = document.createElement('div');
+            snapshotsList.className = 'snapshots-list';
+            maincontainer.appendChild(snapshotsList);
+
+            // Create ul element for snapshots-list
+            var ulSnapshots = document.createElement('ul');
+            snapshotsList.appendChild(ulSnapshots);
+
+            // Create li elements for snapshots-list
+            var snapshotNames = ['firework', 'crest', 'action', 'buffalo'];
+            snapshotNames.forEach(function (name) {
+                var liSnapshot = document.createElement('li');
+                var spanSnapshot = document.createElement('span');
+                spanSnapshot.id = name + 'Span';
+                spanSnapshot.style = 'color: blue; text-decoration: underline; display: inline-block;';
+                spanSnapshot.onclick = function () { changeImage(name); };
+                spanSnapshot.onmouseover = function () {
+                    this.style.cursor = 'pointer';
+                    this.style.color = 'blue';
+                };
+                spanSnapshot.onmouseout = function () {
+                    this.style.color = 'blue';
+                    this.style.backgroundColor = '';
+                    this.style.cursor = 'default';
+                };
+                spanSnapshot.textContent = name.charAt(0).toUpperCase() + name.slice(1);
+                liSnapshot.appendChild(spanSnapshot);
+                ulSnapshots.appendChild(liSnapshot);
+            });
+
+            // Create image-container div
+            var imageContainer = document.createElement('div');
+            imageContainer.style = 'margin-top: 10px;';
+            imageContainer.className = 'image-container';
+            maincontainer.appendChild(imageContainer);
+
+            // Create img element for image-container
+            var mainImage = document.createElement('img');
+            mainImage.id = 'mainImage';
+            mainImage.src = 'https://e2.365dm.com/13/05/800x600/168311249_2941386.jpg?20130813223857';
+            mainImage.alt = '';
+            imageContainer.appendChild(mainImage);
+        }
+
+        // Function to toggle name-container display
+        function toggleNameContainer() {
+            var nameContainer = document.querySelector('.name-container');
+            nameContainer.style.display = nameContainer.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Function to change the image based on the snapshot name
+        function changeImage(imageName) {
+            // Define a mapping of image names to their corresponding URLs
+            const imageMapping = {
+                'firework': 'https://img.freepik.com/free-vector/realistic-fireworks-border-illustration_1284-57268.jpg',
+                'crest': 'https://a.espncdn.com/i/teamlogos/soccer/500-dark/360.png',
+                'action': 'https://akm-img-a-in.tosshub.com/indiatoday/images/story/202004/extraction_0.jpeg?size=690:388',
+                'buffalo': 'https://www.awf.org/sites/default/files/styles/species_image/public/2020-04/SpeciesPage_AfricanBuffalo02_Challenges.jpg?h=29c6c1f6&itok=VHn68yL8'
+                // Add more image URLs for other names
+            };
+
+            // Get the image element
+            const mainImage = document.getElementById('mainImage');
+
+            // Check if the imageName exists in the mapping
+            if (imageMapping.hasOwnProperty(imageName)) {
+                // Update the src attribute with the corresponding URL
+                mainImage.src = imageMapping[imageName];
+            }
+        }
+
+        // Function to initiate the worker
+        function initWorker() {
+            // Create a new Worker only if it doesn't exist
+            if (!worker) {
+                worker = new Worker('worker.js');
+            }
+
+            // Flag to indicate whether the time display is paused
+            let isPaused = false;
+
+            // Function to update the time display and apply the color and contrast color
+            function updateTimeDisplay(time, color, contrastColor) {
+                const timeDisplay = document.getElementById('timeDisplay');
+                timeDisplay.textContent = time;
+                timeDisplay.style.color = color;
+                timeDisplay.style.backgroundColor = contrastColor;
+                timeDisplay.style.width = '500px';
+            }
+
+            // Listen for messages from the worker
+            worker.onmessage = function (event) {
+                const { time, color, contrastColor } = event.data;
+                updateTimeDisplay(time, color, contrastColor);
+            };
+
+            // Handle button click event
+            document.getElementById('showTimeButton').addEventListener('click', function () {
+                const timeDisplay = document.getElementById('timeDisplay');
+                const button = document.getElementById('showTimeButton');
+
+                // Toggle between the two positions
+                if (timeDisplay.style.position === 'fixed') {
+                    // Move to original position
+                    timeDisplay.style.position = 'static';
+                    // Send a message to the worker to pause the time
+                    worker.postMessage('pause');
+                } else {
+                    button.parentNode.removeChild(button);
+                    // Move to top right position
+                    timeDisplay.style.position = 'fixed';
+                    timeDisplay.style.top = '10px';
+                    timeDisplay.style.right = '10px';
+                    // Send a message to the worker to resume the time
+                    worker.postMessage('resume');
+                }
+
+                // Show the time display
+                timeDisplay.style.display = 'block';
+            });
+
+            // Function to change timeDisplay position when clicked
+            function changeTimeDisplayPosition() {
+                const timeDisplay = document.getElementById('timeDisplay');
+
+                // Toggle between the two positions
+                if (timeDisplay.style.position === 'fixed') {
+                    // Move to original position
+                    timeDisplay.style.position = 'static';
+                    // Send a message to the worker to pause the time
+                    worker.postMessage('pause');
+                } else {
+                    // Move to top right position
+                    timeDisplay.style.position = 'fixed';
+                    timeDisplay.style.top = '10px';
+                    timeDisplay.style.right = '10px';
+                    // Send a message to the worker to resume the time
+                    worker.postMessage('resume');
+                }
+            }
+
+            // Add onclick event to timeDisplay
+            document.getElementById('timeDisplay').onclick = changeTimeDisplayPosition;
+
+            // Start updating time immediately
+            worker.postMessage('start');
+        }
+
+        // Attach the function to the 'load' event of the window
+        window.onload = setObjectOnLoad;
+    </script>
+</body>
+
+</html>
